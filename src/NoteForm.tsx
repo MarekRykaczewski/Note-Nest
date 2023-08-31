@@ -1,22 +1,63 @@
+import { FormEvent, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import CreatableReactSelect from "react-select/creatable"
+import { NoteData, Tag } from "./App"
+import { v4 as uuidV4 } from "uuid"
 
-const NoteForm = () => {
+type NoteFormProps = {
+  onSubmit: (data: NoteData) => void
+  onAddTag: (tag: Tag) => void
+  availableTags: Tag[]
+}
+
+const NoteForm = ({ onSubmit, onAddTag, availableTags }: NoteFormProps) => {
+  const titleRef = useRef<HTMLInputElement>(null)
+  const markdownRef = useRef<HTMLTextAreaElement>(null)
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+
+    onSubmit({
+      title: titleRef.current!.value,
+      markdown: markdownRef.current!.value,
+      tags: selectedTags,
+    })
+  }
+
   return (
-    <form className="flex gap-3 flex-col" action="">
+    <form onSubmit={handleSubmit} className="flex gap-3 flex-col" action="">
         <div className="flex flex-col gap-1">
             <label htmlFor="title"> Title </label>
-            <input className="border" id="title" type="text" />
+            <input ref={titleRef} className="border" id="title" type="text" />
         </div>
 
         <div className="flex flex-col gap-1">
             <label htmlFor="tags"> Tags </label>
-            <CreatableReactSelect isMulti />
+            <CreatableReactSelect 
+            onCreateOption={label => {
+              const newTag = { id: uuidV4(), label }
+              onAddTag(newTag)
+              setSelectedTags(prev => [...prev, newTag])
+            }}
+            options={availableTags.map(tag => {
+              return { lavel: tag.label, value: tag.id}
+            })}
+            value={selectedTags.map(tag => {
+              return { label: tag.label, value: tag.id}
+            })} 
+            onChange={tags => {
+              setSelectedTags(tags.map(tag => {
+                return { label: tag.label, id: tag.value }
+              }))
+            }}
+            isMulti 
+            />
         </div>
 
         <div className="flex flex-col gap-1">
             <label htmlFor="markdown"> Body </label>
-            <textarea name="markdown" id="markdown" cols="30" rows="15" />
+            <textarea ref={markdownRef} name="markdown" id="markdown" cols="30" rows="15" />
         </div>
 
         <div className="flex gap-2 justify-end">
