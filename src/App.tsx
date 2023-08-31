@@ -54,7 +54,7 @@ function App() {
   return (
     <div className="py-8 px-8">
     <Routes> 
-      <Route path="/" element={<NoteList availableTags={tags} />} />
+      <Route path="/" element={<NoteList notes={notesWithTags} availableTags={tags} />} />
       <Route path="/new" element={
         <NewNote 
           onSubmit={onCreateNote} 

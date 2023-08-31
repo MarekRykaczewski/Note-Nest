@@ -1,15 +1,37 @@
 import { Link } from "react-router-dom"
-import { Tag } from "./App"
+import { Note, Tag } from "./App"
 import ReactSelect from "react-select"
-import { useState } from "react"
+import { useMemo, useState } from "react"
+
+type SimplifiedNote = {
+	tags: Tag[]
+	title: string
+	id: string
+}
 
 type NoteListProps = {
     availableTags: Tag[]
+		notes: Note[]
 }
 
-const NoteList = ({ availableTags }: NoteListProps) => {
+
+const NoteList = ({ availableTags, notes }: NoteListProps) => {
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([])
 	const [title, setTitle] = useState("")
+
+  const filteredNotes = useMemo(() => {
+    return notes.filter(note => {
+      return (
+        (title === "" ||
+          note.title.toLowerCase().includes(title.toLowerCase())) &&
+        (selectedTags.length === 0 ||
+          // Ensuring all tags match not just some
+					selectedTags.every(tag =>
+            note.tags.some(noteTag => noteTag.id === tag.id)
+          ))
+      )
+    })
+  }, [title, selectedTags, notes])
 
   return (
     <>
@@ -52,8 +74,34 @@ const NoteList = ({ availableTags }: NoteListProps) => {
             />
         	</div>
         </form>
+				<div className="mt-4 grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-3">
+						{filteredNotes.map(note => (
+							<div key={note.id}>
+								<NoteCard id={note.id} title={note.title} tags={note.tags} />
+							</div>
+						))}
+				</div>
     </>
   )
+}
+
+const NoteCard = ({id, title, tags}: SimplifiedNote ) => {
+	return (
+	<Link to={`/${id}`}>
+		<div className="border rounded-lg p-10 h-full transition-transform transition-shadow duration-100 ease-in-out card hover:translate-y-[-5px] hover:shadow-md focus:translate-y-[-5px] focus:shadow-md">
+			<div className="h-full flex flex-col gap-2 items-center justify-center">
+				<span className="text-2xl">{title}</span>
+				{tags.length > 0 && (
+					<div className="flex gap-1">
+						{tags.map(tag => (
+							<div className="bg-blue-500 text-xs w-fit rounded-md py-1 px-2 text-white font-bold truncate" key={tag.id}>{tag.label}</div>
+						))}
+					</div>
+				)}
+			</div>
+		</div>
+	</Link>
+	)
 }
 
 export default NoteList
