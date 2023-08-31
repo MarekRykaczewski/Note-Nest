@@ -60,7 +60,7 @@ const NoteForm = ({ onSubmit, onAddTag, availableTags }: NoteFormProps) => {
 
         <div className="flex flex-col gap-1">
             <label htmlFor="markdown"> Body </label>
-            <textarea ref={markdownRef} name="markdown" id="markdown" cols="30" rows="15" />
+            <textarea ref={markdownRef} name="markdown" id="markdown" cols={30} rows={15} />
         </div>
 
         <div className="flex gap-2 justify-end">
