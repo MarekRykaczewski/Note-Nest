@@ -44,7 +44,7 @@ const NoteForm = ({ onSubmit, onAddTag, availableTags }: NoteFormProps) => {
               setSelectedTags(prev => [...prev, newTag])
             }}
             options={availableTags.map(tag => {
-              return { lavel: tag.label, value: tag.id}
+              return { label: tag.label, value: tag.id}
             })}
             value={selectedTags.map(tag => {
               return { label: tag.label, value: tag.id}
