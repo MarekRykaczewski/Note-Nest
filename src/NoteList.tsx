@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { Note, Tag } from "./App"
 import ReactSelect from "react-select"
 import { useMemo, useState } from "react"
+import Modal from "./Modal"
 
 type SimplifiedNote = {
 	tags: Tag[]
@@ -14,10 +15,18 @@ type NoteListProps = {
 		notes: Note[]
 }
 
+type EditTagsModalProps = {
+  availableTags: Tag[]
+  show: Boolean
+  handleClose: () => void
+}
+
 
 const NoteList = ({ availableTags, notes }: NoteListProps) => {
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([])
 	const [title, setTitle] = useState("")
+  const [editTagsModalOpen, setEditTagsModalOpen] = useState(false)
+
 
   const filteredNotes = useMemo(() => {
     return notes.filter(note => {
@@ -41,7 +50,7 @@ const NoteList = ({ availableTags, notes }: NoteListProps) => {
                 <Link to="/new">
                     <button className="bg-blue-500 h-full hover:bg-blue-400 transition-colors duration-300 px-3 py-1 rounded-md text-white font-bold"> Create </button>
                 </Link>
-                <button className="bg-blue-500 h-full hover:bg-blue-400 transition-colors duration-300 px-3 py-1 rounded-md text-white font-bold"> Edit Tags </button>
+                <button onClick={() => setEditTagsModalOpen(true)} className="bg-blue-500 h-full hover:bg-blue-400 transition-colors duration-300 px-3 py-1 rounded-md text-white font-bold"> Edit Tags </button>
             </div>
         </div>
         <form>
@@ -81,6 +90,7 @@ const NoteList = ({ availableTags, notes }: NoteListProps) => {
 							</div>
 						))}
 				</div>
+        <EditTagsModal availableTags={availableTags} show={editTagsModalOpen} handleClose={() => setEditTagsModalOpen(false)} />
     </>
   )
 }
@@ -102,6 +112,33 @@ const NoteCard = ({id, title, tags}: SimplifiedNote ) => {
 		</div>
 	</Link>
 	)
+}
+
+const EditTagsModal = ({ availableTags, show, handleClose }: EditTagsModalProps) => {
+
+  return (
+    <Modal open={show}>
+      <div className="flex justify-between items-center mb-5">
+        <h1 className="text-2xl h-7 font-bold"> Edit Tags</h1>
+        <button onClick={() => handleClose()} className="text-5xl h-7 text-gray-500 line-clamp-1 flex items-center"> &times; </button>
+      </div>
+      <div className="border mb-4" />
+      <div>
+        <form className="flex flex-col gap-1" action="">
+          {availableTags.map(tag => (
+            <div className="flex" key={tag.id}>
+              <div>
+                <input type="text" value={tag.label} name="" id="" />
+              </div>
+              <div>
+                <button className="hover:bg-red-500 hover:text-white px-3 py-1 border-2 transition-colors duration-300 hover:border-transparent rounded-md text-gray-500 font-bold"> &times; </button>
+              </div>
+            </div>
+          ))}
+        </form>
+      </div>
+    </Modal>
+  )
 }
 
 export default NoteList
