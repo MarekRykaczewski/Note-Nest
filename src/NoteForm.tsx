@@ -8,12 +8,19 @@ type NoteFormProps = {
   onSubmit: (data: NoteData) => void
   onAddTag: (tag: Tag) => void
   availableTags: Tag[]
-}
+} & Partial<NoteData>
 
-const NoteForm = ({ onSubmit, onAddTag, availableTags }: NoteFormProps) => {
+const NoteForm = ({ 
+  onSubmit, 
+  onAddTag, 
+  availableTags, 
+  title = "",
+  markdown = "",
+  tags = []
+}: NoteFormProps) => {
   const titleRef = useRef<HTMLInputElement>(null)
   const markdownRef = useRef<HTMLTextAreaElement>(null)
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(tags)
   const navigate = useNavigate()
 
   const handleSubmit = (e: FormEvent) => {
@@ -32,7 +39,7 @@ const NoteForm = ({ onSubmit, onAddTag, availableTags }: NoteFormProps) => {
     <form onSubmit={handleSubmit} className="flex gap-3 flex-col" action="">
         <div className="flex flex-col gap-1">
             <label htmlFor="title"> Title </label>
-            <input ref={titleRef} className="border" id="title" type="text" />
+            <input ref={titleRef} className="border" id="title" type="text" required defaultValue={title} />
         </div>
 
         <div className="flex flex-col gap-1">
@@ -60,7 +67,7 @@ const NoteForm = ({ onSubmit, onAddTag, availableTags }: NoteFormProps) => {
 
         <div className="flex flex-col gap-1">
             <label htmlFor="markdown"> Body </label>
-            <textarea ref={markdownRef} name="markdown" id="markdown" cols={30} rows={15} />
+            <textarea ref={markdownRef} name="markdown" id="markdown" cols={30} rows={15} required defaultValue={markdown} />
         </div>
 
         <div className="flex gap-2 justify-end">
