@@ -11,10 +11,10 @@ type SimplifiedNote = {
 }
 
 type NoteListProps = {
-    availableTags: Tag[]
-		notes: Note[]
-    onDeleteTag: (id: string) => void
-    onUpdateTag: (id: string, label: string ) => void
+  availableTags: Tag[]
+  notes: Note[]
+  onDeleteTag: (id: string) => void
+  onUpdateTag: (id: string, label: string ) => void
 }
 
 type EditTagsModalProps = {
