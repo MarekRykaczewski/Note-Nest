@@ -72,10 +72,38 @@ function App() {
     setTags(prev => [...prev, tag])
   }
 
+  const updateTag = (id: string, label: string) => {
+    setTags(prevTags => {
+      return prevTags.map(tag => {
+        if (tag.id === id) {
+          return { ...tag, label }
+        } else {
+          return tag
+        }
+      })
+    })
+  }
+
+  const deleteTag = (id: string) => {
+    setTags(prevTags => {
+      return prevTags.filter(tag => tag.id !== id)
+    })   
+  }
+
   return (
     <div className="py-8 px-8">
     <Routes> 
-      <Route path="/" element={<NoteList notes={notesWithTags} availableTags={tags} />} />
+      <Route 
+        path="/" 
+        element={
+          <NoteList 
+            notes={notesWithTags} 
+            availableTags={tags}  
+            onUpdateTag={updateTag}
+            onDeleteTag={deleteTag}
+          />
+        } 
+      />
       <Route path="/new" element={
         <NewNote 
           onSubmit={onCreateNote} 

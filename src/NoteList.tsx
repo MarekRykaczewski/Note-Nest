@@ -13,16 +13,20 @@ type SimplifiedNote = {
 type NoteListProps = {
     availableTags: Tag[]
 		notes: Note[]
+    onDeleteTag: (id: string) => void
+    onUpdateTag: (id: string, label: string ) => void
 }
 
 type EditTagsModalProps = {
   availableTags: Tag[]
   show: Boolean
   handleClose: () => void
+  onDeleteTag: (id: string) => void
+  onUpdateTag: (id: string, label: string ) => void
 }
 
 
-const NoteList = ({ availableTags, notes }: NoteListProps) => {
+const NoteList = ({ availableTags, notes, onDeleteTag, onUpdateTag }: NoteListProps) => {
 	const [selectedTags, setSelectedTags] = useState<Tag[]>([])
 	const [title, setTitle] = useState("")
   const [editTagsModalOpen, setEditTagsModalOpen] = useState(false)
@@ -90,7 +94,13 @@ const NoteList = ({ availableTags, notes }: NoteListProps) => {
 							</div>
 						))}
 				</div>
-        <EditTagsModal availableTags={availableTags} show={editTagsModalOpen} handleClose={() => setEditTagsModalOpen(false)} />
+        <EditTagsModal 
+          availableTags={availableTags} 
+          show={editTagsModalOpen} 
+          handleClose={() => setEditTagsModalOpen(false)} 
+          onUpdateTag={onUpdateTag}
+          onDeleteTag={onDeleteTag}
+        />
     </>
   )
 }
@@ -114,7 +124,7 @@ const NoteCard = ({id, title, tags}: SimplifiedNote ) => {
 	)
 }
 
-const EditTagsModal = ({ availableTags, show, handleClose }: EditTagsModalProps) => {
+const EditTagsModal = ({ availableTags, show, handleClose, onUpdateTag, onDeleteTag }: EditTagsModalProps) => {
 
   return (
     <Modal open={show}>
@@ -128,10 +138,10 @@ const EditTagsModal = ({ availableTags, show, handleClose }: EditTagsModalProps)
           {availableTags.map(tag => (
             <div className="flex" key={tag.id}>
               <div>
-                <input type="text" value={tag.label} name="" id="" />
+                <input onChange={e => onUpdateTag(tag.id, e.target.value)} type="text" value={tag.label} name="" id="" />
               </div>
               <div>
-                <button className="hover:bg-red-500 hover:text-white px-3 py-1 border-2 transition-colors duration-300 hover:border-transparent rounded-md text-gray-500 font-bold"> &times; </button>
+                <button onClick={() => onDeleteTag(tag.id)} className="hover:bg-red-500 hover:text-white px-3 py-1 border-2 transition-colors duration-300 hover:border-transparent rounded-md text-gray-500 font-bold"> &times; </button>
               </div>
             </div>
           ))}
